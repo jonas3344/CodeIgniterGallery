@@ -42,7 +42,7 @@ class Gallery {
 		$aTemplate = $this->_loadTemplate($sFolder);
 		
 		$aImages = array_map(function($v) { return basename($v); }, $aImages);
-		$aAttributes = $this->loadAttributes($sFolder);
+		$aAttributes = $this->_loadAttributes($sFolder);
 		
 		$sMarkup .= $aTemplate['sRowBegin'];
 		foreach($aImages as $k=>$v) {
@@ -58,7 +58,7 @@ class Gallery {
    /**
    * 	name:        getFolders
    *
-   * 	returns all folders which are in the gallery folder. Allows to exclude specific folders. sorts by date
+   * 	returns all folders which are in the gallery folder. Allows to exclude specific folders. sorts by date ASC
    *
    * 	@param		array	  	$aExclude  		array with names of folders which shouldnt be included in the list.
    *
@@ -74,15 +74,17 @@ class Gallery {
 		
 		foreach($aTemp as $k=>$v) {
 			if (!in_array($v, $aExclude)) {
-				$aFolders[$k]['attributes'] = $this->loadAttributes($v);
+				$aFolders[$k]['attributes'] = $this->_loadAttributes($v);
 				$aFolders[$k]['attributes']['date'] = strtotime($aFolders[$k]['attributes']['date']);
 				$aFolders[$k]['folder'] = $v;
 			}			
 		}
-		
+				
 		usort($aFolders, function($a, $b) {
-			return $a['attributes']['date'] + $b['attributes']['date'];
+			return $a['attributes']['date'] - $b['attributes']['date'];
 		});
+		
+		$aFolders = array_reverse($aFolders);
 		
 		return $aFolders;
 	}
@@ -100,9 +102,11 @@ class Gallery {
 	public function createThumbnails($sFolder) {
 		$aFiles = glob(FCPATH . $this->CI->config->item('gallery_folder') . '/' . $sFolder . '/*.jpg');
 		
-		$config['image_library'] = 'gd2';
-		$config['maintain_ratio'] = TRUE;
-		$config['width']         = $this->CI->config->item('gallery_thumbnail_with');
+		$config['image_library'] 	= 'gd2';
+		$config['maintain_ratio'] 	= FALSE;
+		$config['master_dim'] 		= 'height';
+		$config['width']        	= $this->CI->config->item('gallery_thumbnail_width');
+		$config['height']			= $this->CI->config->item('gallery_thumbnail_height');
 		
 		$this->CI->load->library('image_lib');
 		
@@ -130,7 +134,7 @@ class Gallery {
    *	@return		array						array with all the attributes
    **/
 	
-	public function loadAttributes($sFolder) {
+	private function _loadAttributes($sFolder) {
 		$this->CI->load->helper('file');
 		
 		$string = read_file(FCPATH . $this->CI->config->item('gallery_folder') . '/' . $sFolder . '/attributes.txt');
