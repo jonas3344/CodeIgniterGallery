@@ -1,2 +1,2 @@
 # CodeIgniterGallery
-A library for Codeigniter which different features around galleries.
+A library for Codeigniter which offers different features around galleries.
