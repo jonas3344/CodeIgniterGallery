@@ -1,0 +1,4 @@
+title: Testgallery
+date: 02.11.2017
+show: 1
+title_image: example.jpg
