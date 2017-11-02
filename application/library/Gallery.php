@@ -20,12 +20,9 @@
 class Gallery {
 	
 	protected $CI;
-	protected $sTemplate;
   
 	public function __construct() {
 		$this->CI =& get_instance();
-		
-		$this->aFolderAttributes = $this->CI->config->item('gallery_attributes');
 	}
 	
 	/**
@@ -41,10 +38,10 @@ class Gallery {
 	public function createGallery($sFolder) {
 		$sMarkup = '';
 		
-		$aTempImages = glob(FCPATH . $this->CI->config->item('gallery_folder') . '/' . $sFolder . '/*.jpg');
+		$aImages = glob(FCPATH . $this->CI->config->item('gallery_folder') . '/' . $sFolder . '/*.jpg');
 		$aTemplate = $this->_loadTemplate($sFolder);
 		
-		$aImages = array_map(function($v) { return basename($v); }, $aTempImages);
+		$aImages = array_map(function($v) { return basename($v); }, $aImages);
 		$aAttributes = $this->loadAttributes($sFolder);
 		
 		$sMarkup .= $aTemplate['sRowBegin'];
@@ -159,14 +156,14 @@ class Gallery {
    **/
 	
 	private function _loadTemplate($sFolder) {
-		if (file_exists(FCPATH . $this->sGalFolder . '/' . $sFolder . '/_template.html')) {
-			$sFile = file_get_contents(FCPATH . $this->sGalFolder . '/' . $sFolder . '/_template.html');
+		if (file_exists(FCPATH . $this->CI->config->item('gallery_folder') . '/' . $sFolder . '/_template.html')) {
+			$sFile = file_get_contents(FCPATH . $this->CI->config->item('gallery_folder') . '/' . $sFolder . '/_template.html');
 		} else {
-			$sFile = file_get_contents(FCPATH . $this->sGalFolder . '/_base_template.html');
+			$sFile = file_get_contents(FCPATH . $this->CI->config->item('gallery_folder') . '/_base_template.html');
 		}
 		
 		if ($sFile === false) {
-			throw new Exception("Couldn't find template!", 1);
+			throw new Exception('Couldn not find template!', 1);
 		}
 		
 		$aTemplate['sRowBegin'] = substr($sFile, 6, strpos($sFile, '{item}')-6);
