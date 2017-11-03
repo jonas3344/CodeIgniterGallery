@@ -42,7 +42,7 @@ class Gallery {
 		$aTemplate = $this->_loadTemplate($sFolder);
 		
 		$aImages = array_map(function($v) { return basename($v); }, $aImages);
-		$aAttributes = $this->_loadAttributes($sFolder);
+		$aAttributes = $this->loadAttributes($sFolder);
 		
 		$sMarkup .= $aTemplate['sRowBegin'];
 		foreach($aImages as $k=>$v) {
@@ -53,6 +53,21 @@ class Gallery {
 		$sMarkup .= '</div>';
 		
 		return array('sMarkup' => $sMarkup, 'aAttributes' => $aAttributes);
+	}
+	
+   /**
+   * 	name:        getImages
+   *
+   * 	returns an array with all images inside of a folder
+   *
+   * 	@param		string	  	$sFolder  		string with the name of the folder
+   *
+   *	@return		array						array with all the images
+   **/
+	
+	public function getImages($sFolder) {
+		$aImages = glob(FCPATH . $this->CI->config->item('gallery_folder') . '/' . $sFolder . '/*.jpg');
+		return array_map(function($v) { return basename($v); }, $aImages);
 	}
 	
    /**
@@ -74,7 +89,7 @@ class Gallery {
 		
 		foreach($aTemp as $k=>$v) {
 			if (!in_array($v, $aExclude)) {
-				$aFolders[$k]['attributes'] = $this->_loadAttributes($v);
+				$aFolders[$k]['attributes'] = $this->loadAttributes($v);
 				$aFolders[$k]['attributes']['date'] = strtotime($aFolders[$k]['attributes']['date']);
 				$aFolders[$k]['folder'] = $v;
 			}			
@@ -124,6 +139,30 @@ class Gallery {
 	}
 	
    /**
+   * 	name:        writeAttributes
+   *
+   * 	Replaces the attributes.txt inside of a folder with the attributes in the parameter
+   *
+   * 	@param		string	  	$sFolder   		name of the folder
+   *	@param		array		$aAttributes	array with the attributes
+   *
+   **/
+	
+	public function writeAttributes($sFolder, $aAttributes) {
+		$this->CI->load->helper('file');
+		$sData = '';
+		
+		foreach($aAttributes as $k=>$v) {
+			$sData .= $k . ': ' .$v . "\n";
+		}
+		
+		if (!write_file(FCPATH . $this->CI->config->item('gallery_folder') . '/' . $sFolder . '/attributes.txt', $sData)) {
+			throw new Exception('Couldn not write atrribute-file!', 2);
+		}
+
+	}
+	
+   /**
    * 	name:        loadAttributes
    *
    * 	loads the attributes for a gallery out of the file. The attributes are stored in attributes.txt in the gallery folder.
@@ -134,7 +173,7 @@ class Gallery {
    *	@return		array						array with all the attributes
    **/
 	
-	private function _loadAttributes($sFolder) {
+	public function loadAttributes($sFolder) {
 		$this->CI->load->helper('file');
 		
 		$string = read_file(FCPATH . $this->CI->config->item('gallery_folder') . '/' . $sFolder . '/attributes.txt');
