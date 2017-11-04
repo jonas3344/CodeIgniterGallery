@@ -166,7 +166,8 @@ class Gallery {
    * 	name:        loadAttributes
    *
    * 	loads the attributes for a gallery out of the file. The attributes are stored in attributes.txt in the gallery folder.
-   *	The attributes which should be loaded are stored in $this->config->item('gallery_attributes')
+   *	The attributes which should be loaded are stored in $this->config->item('gallery_attributes'). If the attributes.txt file does not exist
+   *	the function creates it.
    *
    * 	@param		string	  	$sFolder   		name of the folder
    *
@@ -176,7 +177,12 @@ class Gallery {
 	public function loadAttributes($sFolder) {
 		$this->CI->load->helper('file');
 		
-		$string = read_file(FCPATH . $this->CI->config->item('gallery_folder') . '/' . $sFolder . '/attributes.txt');
+		$string = file_get_contents(FCPATH . $this->CI->config->item('gallery_folder') . '/' . $sFolder . '/attributes.txt');
+		
+		if ($string === FALSE) {
+			// file doesn't exist
+			$this->writeAttributes($sFolder, $this->CI->config->item('gallery_attributes'));
+		}
 		
 		$aLoadedData = explode("\n", $string);
 		$aAttributes = $this->CI->config->item('gallery_attributes');
