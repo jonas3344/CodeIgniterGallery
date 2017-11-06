@@ -18,6 +18,7 @@ attributes.txt => a txt-file for each gallery with the attributes specified in t
 3. Don't forget to load the config (either through autoloading or through $this->load->config)
 4. Load the library: $this->load->library('gallery', NULL, 'my_gallery');
 5. Be sure you set the right path in your config file
+6. Call the function you need with $this->my_gallery->
 
 -- CONFIGURATION
 
@@ -40,6 +41,10 @@ Creates a gallery out of the photos which are located in the specified folder. U
 Returns an array with the following items:
     sMarkup => html-markup of the gallery
     aAttributes => All attributes of the gallery
+	
+getImages('folder_name')
+
+Returns all Images (Just filenames) of a certain folder
                                             
 getFolders()
 
@@ -56,5 +61,12 @@ $this->my_gallery->createThumbnails('folder_name')
 
 Creates thumbnails for the specified folder and stores them in a thumb-folder inside the gallery-folder.
 
+writeAttributes('folder_name', array('attributeA' => 'x', 'attributeB' => 'y', etc.)) 
+
+replaces the attributes.txt inside of a folder with a new one with the keys and values inside the second parameter
+
+loadAttributes('folder_name')
+
+reads the attributes from the attributes.txt inside of a folder. If the file doesn't exist it creates a new one with the keys and values out of the config file.
 
 Feel free to add something or post any questions
