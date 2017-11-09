@@ -141,7 +141,7 @@ class Gallery {
    /**
    * 	name:        writeAttributes
    *
-   * 	Replaces the attributes.txt inside of a folder with the attributes in the parameter
+   * 	Replaces the attributes.txt inside of a folder with the attributes in the parameter. If the file does not exist it creates the file
    *
    * 	@param		string	  	$sFolder   		name of the folder
    *	@param		array		$aAttributes	array with the attributes
@@ -192,6 +192,35 @@ class Gallery {
 		}
 		
 		return $aAttributes;
+	}
+	
+	/**
+   * 	name:        deleteGallery
+   *
+   * 	Deletes a gallery from the file-system. Deletes the whole folder including images, attributes.txt and _template.html (if available).
+   *
+   * 	@param		string	  	$sFolder   		name of the folder
+   *
+   **/
+	
+	public function deleteGallery($sFolder) {
+		$this->CI->load->helper('file');
+		
+		delete_files(FCPATH . $this->CI->config->item('gallery_folder') . '/' . $sFolder, true);
+		rmdir(FCPATH . $this->CI->config->item('gallery_folder') . '/' . $sFolder);
+	}
+	
+   /**
+   * 	name:        backupGallery
+   *
+   * 	Puts all files inside a gallery (photos, attributes.txt and _template.html) into a zip and forces the browser to download it
+   *
+   * 	@param		string	  	$sFolder   		name of the folder
+   *
+   **/
+	
+	public function backupGallery($sFolder) {
+		
 	}
 	
    /**
