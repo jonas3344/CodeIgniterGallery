@@ -4,6 +4,8 @@ A library for Codeigniter which offers different features around galleries.
 Jonas Bay - jonas.bay@bluewin.ch
 02.11.2017
 
+Still work in Progress!
+
 -- FILES
 Gallery.php => This is the library
 gallery.php => This is the configuration-file
